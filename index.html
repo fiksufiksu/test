@@ -42,30 +42,28 @@
 <div class="wrap">
   <div class="label">one moment</div>
   <div class="spinner"></div>
-  <div class="msg">opening <span>amazon</span>...</div>
+  <div class="msg">opening <span>your ebook</span>...</div>
   <div class="fallback">
-    not working? <a href="https://amzn.to/41f018p" id="fallback-link">tap here</a>
+    not working? <a href="https://fiksufiksu.github.io/test/hello%20(linktwin).pdf">tap here</a>
   </div>
 </div>
 
 <script>
-  const AMAZON_URL = "https://amzn.to/41f018p";
+  const PDF_URL = "https://fiksufiksu.github.io/test/hello%20(linktwin).pdf";
   const ua = navigator.userAgent;
   const isAndroid = /android/i.test(ua);
   const isIOS = /iphone|ipad|ipod/i.test(ua);
 
   function redirect() {
     if (isIOS) {
-      // x-safari-https:// forces out of IAB into Safari, then Safari handles Amazon universal link
-      window.location.href = "x-safari-" + AMAZON_URL;
-      setTimeout(() => { window.location.href = AMAZON_URL; }, 1500);
+      window.location.href = "x-safari-" + PDF_URL;
+      setTimeout(() => { window.location.href = PDF_URL; }, 1500);
     } else if (isAndroid) {
-      // googlechrome:// forces out of IAB into Chrome
-      const chromeUrl = "googlechrome://" + AMAZON_URL.replace("https://", "");
+      const chromeUrl = "googlechrome://" + PDF_URL.replace("https://", "");
       window.location.href = chromeUrl;
-      setTimeout(() => { window.location.href = AMAZON_URL; }, 1500);
+      setTimeout(() => { window.location.href = PDF_URL; }, 1500);
     } else {
-      window.location.href = AMAZON_URL;
+      window.location.href = PDF_URL;
     }
   }
 
