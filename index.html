@@ -6,85 +6,36 @@
 <title>Redirecting...</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0a0a0a;
-    --fg: #f0ece4;
-    --accent: #ff6b2b;
-    --muted: #444;
-  }
-
+  :root { --bg: #0a0a0a; --fg: #f0ece4; --accent: #ff6b2b; --muted: #444; }
   body {
-    background: var(--bg);
-    color: var(--fg);
+    background: var(--bg); color: var(--fg);
     font-family: 'DM Mono', monospace;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    min-height: 100vh; display: flex;
+    align-items: center; justify-content: center;
   }
-
-  .wrap {
-    text-align: center;
-    padding: 2rem;
-  }
-
+  .wrap { text-align: center; padding: 2rem; }
   .label {
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-    opacity: 0;
+    font-size: 0.7rem; letter-spacing: 0.25em;
+    color: var(--muted); text-transform: uppercase;
+    margin-bottom: 2rem; opacity: 0;
     animation: fadeUp 0.6s 0.1s forwards;
   }
-
   .spinner {
-    width: 48px;
-    height: 48px;
-    border: 2px solid var(--muted);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    margin: 0 auto 2rem;
+    width: 48px; height: 48px;
+    border: 2px solid var(--muted); border-top-color: var(--accent);
+    border-radius: 50%; margin: 0 auto 2rem;
     animation: spin 0.8s linear infinite, fadeUp 0.6s 0.2s both;
   }
-
-  .msg {
-    font-size: 1rem;
-    color: var(--fg);
-    opacity: 0;
-    animation: fadeUp 0.6s 0.3s forwards;
-  }
-
-  .msg span {
-    color: var(--accent);
-  }
-
+  .msg { font-size: 1rem; opacity: 0; animation: fadeUp 0.6s 0.3s forwards; }
+  .msg span { color: var(--accent); }
   .fallback {
-    margin-top: 2.5rem;
-    font-size: 0.72rem;
-    color: var(--muted);
-    opacity: 0;
-    animation: fadeUp 0.6s 1.8s forwards;
+    margin-top: 2.5rem; font-size: 0.72rem; color: var(--muted);
+    opacity: 0; animation: fadeUp 0.6s 1.8s forwards;
   }
-
-  .fallback a {
-    color: var(--fg);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  .fallback a { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
@@ -99,28 +50,25 @@
 
 <script>
   const AMAZON_URL = "https://amzn.to/41f018p";
-
-  // Try to open Amazon app via deep link, fall back to web URL
-  const isAndroid = /android/i.test(navigator.userAgent);
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const ua = navigator.userAgent;
+  const isAndroid = /android/i.test(ua);
+  const isIOS = /iphone|ipad|ipod/i.test(ua);
 
   function redirect() {
     if (isIOS) {
-      // iOS: try universal link first (works even in IAB)
-      window.location.href = AMAZON_URL;
+      // x-safari-https:// forces out of IAB into Safari, then Safari handles Amazon universal link
+      window.location.href = "x-safari-" + AMAZON_URL;
+      setTimeout(() => { window.location.href = AMAZON_URL; }, 1500);
     } else if (isAndroid) {
-      // Android: try intent scheme to force app open
-      const intentUrl = "intent://amzn.to/41f018p#Intent;scheme=https;package=com.amazon.mShop.android.shopping;end";
-      window.location.href = intentUrl;
-      // Fallback after 1.5s if intent didn't work
+      // googlechrome:// forces out of IAB into Chrome
+      const chromeUrl = "googlechrome://" + AMAZON_URL.replace("https://", "");
+      window.location.href = chromeUrl;
       setTimeout(() => { window.location.href = AMAZON_URL; }, 1500);
     } else {
-      // Desktop
       window.location.href = AMAZON_URL;
     }
   }
 
-  // Small delay so the animation is visible
   setTimeout(redirect, 800);
 </script>
 </body>
